@@ -1,0 +1,153 @@
+- name: Update system (EL8 / Fedora)
+  dnf:
+    name: "*"
+    state: latest
+  when: ansible_distribution == "Fedora" or ansible_distribution_major_version == "8"
+  tags:
+    - install_system_packages
+    - update
+    - install_all
+
+- name: Update system (EL7)
+  yum:
+    name: "*"
+    state: latest
+  when: ansible_distribution_major_version == "7"
+  tags:
+    - install_system_packages
+    - update
+    - install_all
+
+- name: Enable PowerTools (Rocky8 / CentOS8)
+  ini_file:
+    path: "/etc/yum.repos.d/{{ ansible_distribution }}-PowerTools.repo"
+    section: powertools
+    option: enabled
+    value: "1"
+  when:
+    - ansible_distribution in [ "CentOS", "Rocky" ]
+    - ansible_distribution_major_version == "8"
+  tags:
+    - install_system_packages
+    - install_all
+
+- name: Enable PowerTools (RHEL8)
+  rhsm_repository:
+    name: "codeready-builder-for-rhel-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}-rpms"
+    state: enabled
+  when:
+    - ansible_distribution == "RedHat"
+    - ansible_distribution_major_version == "8"
+  tags:
+    - install_system_packages
+    - install_all
+
+- name: Installing EPEL repo (EL8)
+  dnf:
+    name: "{{ epel_repo_url }}"
+    state: "latest"
+    disable_gpg_check: yes
+  when: 
+    - ansible_distribution in [ "CentOS", "Rocky", "RedHat" ]
+    - ansible_distribution_major_version == "8"
+  tags:
+    - install_system_packages
+    - install_all
+
+- name: Installing EPEL repo (EL7)
+  yum:
+    name: "{{ epel_repo_url }}"
+    state: "latest"
+    disable_gpg_check: yes
+  when: 
+    - ansible_distribution in [ "CentOS", "RedHat" ]
+    - ansible_distribution_major_version == "7"
+  tags:
+    - install_system_packages
+    - install_all
+
+- name: Packages installation (EL8 / Fedora)
+  dnf:
+    name: "{{ system_packages_el8 }}"
+    state: latest
+  when: ansible_distribution == "Fedora" or ansible_distribution_major_version == "8"
+  tags:
+    - install_system_packages
+    - install_all
+
+- name: Packages installation (EL7)
+  yum:
+    name: "{{ system_packages_el7 }}"
+    state: latest
+  when: ansible_distribution_major_version == "7"
+  tags:
+    - install_system_packages
+    - install_all
+
+- name: Download git source (EL7)
+  get_url:
+    url: "{{ git_source_url }}"
+    dest: "{{ git_source_archive }}"
+  when: ansible_distribution_major_version == "7"
+  tags:
+    - install_system_packages
+    - install_all
+    - git
+
+- name: Create git building dir (EL7)
+  file:
+    state: directory
+    path: "{{ git_source_path }}"
+    recurse: yes
+  when: ansible_distribution_major_version == "7"
+  tags:
+    - install_system_packages
+    - install_all
+    - git
+
+- name: Extract git archive (EL7)
+  ansible.builtin.unarchive:
+    src: "{{ git_source_archive }}"
+    dest: "{{ git_source_path }}"
+    remote_src: yes
+  when: ansible_distribution_major_version == "7"
+  tags:
+    - install_system_packages
+    - install_all
+    - git
+
+- name: Build git (EL7)
+  command: "make configure"
+  args:
+    chdir: "{{ git_source_full_path }}"
+  when: ansible_distribution_major_version == "7"
+  tags:
+    - install_all
+    - git
+
+- name: Configure git (EL7)
+  command: "./configure --prefix=/usr --with-curl"
+  args:
+    chdir: "{{ git_source_full_path }}"
+  when: ansible_distribution_major_version == "7"
+  tags:
+    - install_all
+    - git
+
+- name: Compile git (EL7)
+  command: "make"
+  args:
+    chdir: "{{ git_source_full_path }}"
+  when: ansible_distribution_major_version == "7"
+  tags:
+    - install_all
+    - git
+
+- name: Install git (EL7)
+  command: "make install"
+  args:
+    chdir: "{{ git_source_full_path }}"
+  when: ansible_distribution_major_version == "7"
+  tags:
+    - install_all
+    - git

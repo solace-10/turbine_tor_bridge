@@ -1,0 +1,41 @@
+- name: Restart Tor service
+  systemd:
+    name: tor
+    daemon-reload: yes
+    state: restarted
+  tags:
+    - restart
+    - install_all
+
+- name: Reload Tor service
+  systemd:
+    name: tor
+    daemon-reload: yes
+    state: reloaded
+  tags:
+    - reload
+
+- name: Stop Tor service
+  systemd:
+    name: tor
+    daemon-reload: yes
+    state: stopped
+  tags:
+    - stop
+
+- name: Enabling Tor daemon service
+  systemd:
+    name: "tor@default"
+    daemon-reload: yes
+    enabled: yes
+  tags:
+    - enable
+    - install_all
+
+- name: Launching Tor service
+  systemd:
+    name: tor
+    daemon-reload: yes
+    state: started
+  tags:
+    - start

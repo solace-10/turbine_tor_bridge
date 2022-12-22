@@ -1,0 +1,106 @@
+- name: Configure Torrc file
+  template:
+    src: torrc.j2
+    dest: "{{ torrc_path }}"
+    owner: "root"
+    group: "{{ torrc_group }}"
+    mode: 0644
+  tags:
+    - tor_config
+    - install_all
+
+- name: Allow ports in SELinux
+  seport:
+    ports:
+      - "{{ tor_port }}"
+      - "{{ obfs4_port }}"
+    proto: tcp
+    setype: tor_port_t
+    state: present
+  when: ansible_os_family == 'RedHat'
+  tags:
+    - tor_config
+    - install_all
+
+- name: Allow ports in Firewalld
+  firewalld:
+    port: "{{ item }}/tcp"
+    permanent: yes
+    state: enabled
+  ignore_errors: yes
+  with_items:
+    - "{{ tor_port }}"
+    - "{{ obfs4_port }}"
+  when: ansible_os_family == 'RedHat'
+  tags:
+    - tor_config
+    - install_all
+
+- name: Restarting FirewallD
+  systemd:
+    name: firewalld.service
+    state: restarted
+  ignore_errors: yes
+  when: ansible_os_family == 'RedHat'
+  tags:
+    - tor_config
+    - install_all
+
+- name: Set cap_net_bind_service on obfs4
+  capabilities:
+    path: /usr/bin/obfs4proxy
+    capability: 'cap_net_bind_service=+ep'
+    state: present
+  when: obfs4_port < 1024 and ansible_os_family in [ 'Debian', 'RedHat' ]
+  tags:
+    - tor_config
+    - install_all
+
+- name: Override systemd configuration to use privileged ports
+  file:
+    state: directory
+    path: "/etc/systemd/system/{{ item }}.d"
+    recurse: yes
+  with_items:
+    - "tor@default.service"
+    - "tor@.service"
+  when: obfs4_port < 1024 and ansible_os_family in [ 'Debian', 'RedHat' ]
+  tags:
+    - tor_config
+    - install_all
+
+- name: Override systemd configuration to use privileged ports
+  copy:
+    src: systemd_override.conf
+    dest: "/etc/systemd/system/{{ item }}.d/override.conf"
+    mode: 0644
+  with_items:
+    - "tor@default.service"
+    - "tor@.service"
+  when: obfs4_port < 1024 and ansible_os_family in [ 'Debian', 'RedHat' ]
+  tags:
+    - tor_config
+    - install_all
+    
+- name: Configure net.inet.ip.random_id
+  ansible.posix.sysctl:
+    name: net.inet.ip.random_id
+    value: "1"
+    state: present
+  when: ansible_os_family == 'FreeBSD'
+
+- name: Configure kern.maxfiles
+  ansible.posix.sysctl:
+    name: kern.maxfiles
+    value: 16000
+    state: present
+  when: ansible_os_family == 'OpenBSD'
+
+- name: Add configuration to login.conf
+  blockinfile:
+    path: /etc/login.conf
+    block: |
+      tor:\
+        :openfiles-max=13500:\
+        :tc=daemon:
+  when: ansible_os_family == 'OpenBSD'

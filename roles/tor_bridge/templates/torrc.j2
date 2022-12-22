@@ -1,0 +1,18 @@
+BridgeRelay 1
+
+ORPort {{ tor_port }}
+
+ServerTransportPlugin obfs4 exec {{ obfs4_path }}
+
+ServerTransportListenAddr obfs4 {{ obfs4_ip }}:{{ obfs4_port }}
+
+ExtORPort {{ extorport }}
+
+ContactInfo {{ email_address }}
+
+Nickname {{ nickname }}
+
+{% for item in additionnal_torrc_config %}
+{{ item.name }} {{ item.value }}
+
+{% endfor %}
