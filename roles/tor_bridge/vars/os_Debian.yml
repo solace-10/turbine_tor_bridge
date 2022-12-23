@@ -1,0 +1,19 @@
+---
+system_packages:
+  - unattended-upgrades
+  - apt-listchanges
+  - apt-transport-https
+  - gpg
+
+tor_packages:
+  - tor
+  - tor-geoipdb
+  - deb.torproject.org-keyring
+  - obfs4proxy
+
+torrc_path: /etc/tor/torrc
+torrc_group: root
+obfs4_path: /usr/bin/obfs4proxy
+
+fingerprint_file: /var/lib/tor/fingerprint
+cert_file: /var/lib/tor/pt_state/obfs4_bridgeline.txt
