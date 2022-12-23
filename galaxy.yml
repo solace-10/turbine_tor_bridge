@@ -8,7 +8,7 @@ namespace: edgerunnerdev
 name: tor_bridge
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 0.1.0
+version: 0.1.1
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -16,12 +16,14 @@ readme: README.md
 # A list of the collection's content authors. Can be just the name or in the format 'Full Name <email> (url)
 # @nicks:irc/im.site#channel'
 authors:
-- Pedro Nunes <edgerunner@riseup.net>
-
+- Pedro Nunes <edgerunner@riseup.net> (https://github.com/edgerunnerdev/)
+- Lilian BAZILLE (https://github.com/lilianbaz)
+- AlphaCorvus (https://github.com/AlphaCorvus)
+- pjsier (https://github.com/pjsier)
 
 ### OPTIONAL but strongly recommended
 # A short summary description of the collection
-description: your collection description
+description: This Ansible role allows you to deploy and configure multiple Tor Bridge nodes.
 
 # Either a single license or a list of licenses for content inside of a collection. Ansible Galaxy currently only
 # accepts L(SPDX,https://spdx.org/licenses/) licenses. This key is mutually exclusive with 'license_file'
@@ -34,7 +36,10 @@ license_file: ''
 
 # A list of tags you want to associate with the collection for indexing/searching. A tag name has the same character
 # requirements as 'namespace' and 'name'
-tags: []
+tags:
+- tor
+- tor-bridges
+- censorship
 
 # Collections that this collection requires to be installed for it to be usable. The key of the dict is the
 # collection label 'namespace.name'. The value is a version range
@@ -53,7 +58,7 @@ documentation: http://docs.example.com
 homepage: http://example.com
 
 # The URL to the collection issue tracker
-issues: http://example.com/issue/tracker
+issues: https://github.com/edgerunnerdev/tor_bridge/issues
 
 # A list of file glob-like patterns used to filter any files or directories that should not be included in the build
 # artifact. A pattern is matched from the relative path of the file or directory of the collection directory. This
