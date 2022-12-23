@@ -33,3 +33,11 @@
   tags:
     - tor_packages
     - install_all
+
+- name: obfs4proxy installation
+  when: ansible_distribution_release == "bullseye"
+  ansible.builtin.apt:
+    name: "obfs4proxy"
+    default_release: "bullseye-backports"
+    update_cache: yes
+    state: latest
