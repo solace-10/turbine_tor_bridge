@@ -1,4 +1,4 @@
-# Ansible Collection - edgerunnerdev.tor_bridge
+# Ansible Collection - solace10.turbine_tor_bridge
 
 This Ansible collection allows you to deploy and configure multiple Tor Bridge nodes.
 
@@ -15,13 +15,15 @@ This Ansible collection allows you to deploy and configure multiple Tor Bridge n
 
 ## Installation
 
-This collection is available on Galaxy: <TODO>
+This collection is only available through GitHub:
 
 ```
-$ ansible-galaxy install alphacorvus.ansible_tor_bridge
+$ ansible-galaxy collection install git+https://github.com/solace-10/turbine_tor_bridge.git
 ```
 
 ## Usage
+
+**Warning**: this collection would normally be used through [Turbine](https://github.com/solace-10/turbine) rather than directly.
 
 Prepare your Ansible Hosts file. You may use an email address that will be used for the contact info as per Tor Project's [documentation](https://community.torproject.org/relay/setup/bridge/).
 
@@ -65,10 +67,10 @@ The following playbook can be used:
 - name: Deploy Tor Bridges
   hosts: "{{ servers }}"
   collections:
-    - edgerunnerdev.tor_bridge
+    - solace10.turbine_tor_bridge
   become: yes
   roles:
-    - edgerunnerdev.tor_bridge.tor_bridge
+    - solace10.turbine_tor_bridge.tor_bridge
 ```
 
 Deploy the Tor Bridge nodes use the following command: 
@@ -106,4 +108,4 @@ This role was originally created in 2022 by [Lilian BAZILLE](https://github.com/
 
 Support for FreeBSD and OpenBSD added by [pjsier](https://github.com/pjsier).
 
-Collection support and further maintenance by [Pedro Nunes](https://github.com/edgerunnerdev/).
+Collection support and further maintenance by [Pedro Nunes](https://github.com/solace10/).
